@@ -46,4 +46,17 @@ def load_transactions_from_csv(file_path: str) -> List[Dict[str, Any]]:
 
 def monthly_summary(transactions: List[Dict[str, Any]]) -> Dict[str, Dict[str, Any]]:
     """Summarize transactions by month."""
-    pass
+    summary: Dict[str, Dict[str, Any]] = {}
+    for transaction in transactions:
+        month = str(transaction["date"])[:7]
+        amount = int(transaction["amount"])
+        month_summary = summary.setdefault(
+            month,
+            {"income": 0, "expense": 0, "net": 0},
+        )
+        if amount >= 0:
+            month_summary["income"] += amount
+        else:
+            month_summary["expense"] += amount
+        month_summary["net"] += amount
+    return summary

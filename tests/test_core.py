@@ -5,6 +5,7 @@ from budget.core import (
     filter_by_category,
     get_balance,
     load_transactions_from_csv,
+    monthly_summary,
 )
 
 
@@ -234,3 +235,26 @@ def test_load_transactions_from_csv_reads_step1_data() -> None:
         "memo": "중고마켓",
     }
     assert all(isinstance(transaction["amount"], int) for transaction in transactions)
+
+
+def test_monthly_summary_groups_transactions_by_month() -> None:
+    """Monthly summary should aggregate income, expense, and net by YYYY-MM."""
+    transactions = load_transactions_from_csv("data/step3_transactions.csv")
+
+    summary = monthly_summary(transactions)
+
+    assert summary["2025-01"] == {
+        "income": 405037,
+        "expense": -2886860,
+        "net": -2481823,
+    }
+    assert summary["2026-03"] == {
+        "income": 489857,
+        "expense": -3301374,
+        "net": -2811517,
+    }
+
+
+def test_monthly_summary_returns_empty_dict_for_empty_list() -> None:
+    """Monthly summary should return an empty dict for no transactions."""
+    assert monthly_summary([]) == {}
