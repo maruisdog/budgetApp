@@ -18,7 +18,12 @@ def get_balance(transactions: List[Dict[str, Any]]) -> float:
 
 def filter_by_category(transactions: List[Dict[str, Any]], category: str) -> List[Dict[str, Any]]:
     """Return transactions that match the given category."""
-    pass
+    target = category.casefold()
+    return [
+        dict(transaction)
+        for transaction in transactions
+        if str(transaction.get("category", "")).casefold() == target
+    ]
 
 
 def load_transactions_from_csv(file_path: str) -> List[Dict[str, Any]]:
